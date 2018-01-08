@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 public class GameView extends SurfaceView implements Runnable {
 
@@ -21,6 +22,7 @@ public class GameView extends SurfaceView implements Runnable {
     private SurfaceHolder ourHolder;
 
     private BallManager ballManager;
+
 
     Context context;
     long startFrameTime;
@@ -61,7 +63,6 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void draw() {
 
-        //super.draw(canvas);
         if (ourHolder.getSurface().isValid()) {
             canvas = ourHolder.lockCanvas();
 
@@ -95,6 +96,9 @@ public class GameView extends SurfaceView implements Runnable {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
+        if(!ballManager.getPlayStatus()) {
+            ballManager.switchPlayStatus();
+        }
         return true;
     }
 }
