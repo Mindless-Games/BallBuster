@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.ListIterator;
 
 public class GameView extends SurfaceView implements Runnable {
 
@@ -22,6 +25,8 @@ public class GameView extends SurfaceView implements Runnable {
     private SurfaceHolder ourHolder;
 
     private BallManager ballManager;
+
+    int score = 0;
 
 
     Context context;
@@ -71,7 +76,7 @@ public class GameView extends SurfaceView implements Runnable {
 
             paint.setTextSize(150);
             paint.setColor(Color.argb(255,255,255,255));
-            canvas.drawText("score: ", 10, 100, paint);
+            canvas.drawText("score: " + score, 10, 100, paint);
 
             ballManager.draw(canvas);
 
@@ -99,6 +104,40 @@ public class GameView extends SurfaceView implements Runnable {
         if(!ballManager.getPlayStatus()) {
             ballManager.switchPlayStatus();
         }
+//        if(ballManager.getPlayStatus()) {
+
+            switch(motionEvent.getAction()) {
+
+                case(MotionEvent.ACTION_DOWN):
+                    Log.d("onTouch", "click");
+                    int x = (int)motionEvent.getX();
+                    int y = (int)motionEvent.getY();
+
+                    for(Iterator<Ball> ite = ballManager.balls.listIterator(); ite.hasNext();) {
+                        Ball ball = ite.next();
+                        if(ball.getRectangle().contains(x,y)){
+                            try {
+                                ite.remove();
+                                score++;
+                            } catch (Exception e) {
+                                Log.d("GameView", "Error in onTouch");
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+
+//                    for(Ball ball : ballManager.balls) {
+//
+//                        if(ball.getRectangle().contains(x,y)) {
+//                            try {
+//                                score++;
+//                            } catch (Exception e) {
+//                                Log.d("onTouchEvent", "ballClicked");
+//                            }
+//                        }
+//                    }
+            }
+//        }
         return true;
     }
 }

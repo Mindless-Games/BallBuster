@@ -9,11 +9,13 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
     public static GameView gameView;
+    public static CustomizeScreen customizeScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,14 @@ public class MainActivity extends Activity {
             @Override
             public void onClick(View view) {
                 setContentView(gameView);
+            }
+        });
+
+        final ImageButton cusButton = findViewById(R.id.cusScreenButton);
+        cusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setContentView(R.layout.customize_screen);
             }
         });
     }

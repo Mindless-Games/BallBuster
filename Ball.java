@@ -24,7 +24,6 @@ public class Ball implements GameObject {
         this.startY = startY;
         this.ballHeight = ballHeight;
 
-        r = new Rect(startX, startY,startX + ballHeight,startY + ballHeight);
         a = new RectF(startX, startY,startX + ballHeight,startY + ballHeight);
     }
 
@@ -41,8 +40,6 @@ public class Ball implements GameObject {
     public void draw(Canvas canvas) {
         paint = new Paint();
         paint.setColor(color);
-        //canvas.drawRect(r, paint);
-        //canvas.drawCircle(startX, startY, ballHeight/2, paint);
         canvas.drawOval(a, paint);
     }
 
