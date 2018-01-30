@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.support.annotation.MainThread;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,11 +21,15 @@ public class GameView extends SurfaceView implements Runnable {
     private volatile boolean running;
     private Thread gameThread = null;
 
+    private boolean gameOver = false;
+
     private Paint paint;
     private Canvas canvas;
     private SurfaceHolder ourHolder;
 
     private BallManager ballManager;
+
+    private Rect r = new Rect();
 
     int score = 0;
 
@@ -63,7 +68,14 @@ public class GameView extends SurfaceView implements Runnable {
 
     public void update() {
         //add collision and game over
-        ballManager.update();
+        if(ballManager.getPlayStatus() && !gameOver) {
+            ballManager.update();
+        }
+        for(Ball ball : ballManager.balls) {
+            if(ball.getRectangle().top >= Constants.SCREEN_HEIGHT) {
+                gameOver = true;
+            }
+        }
     }
 
     public void draw() {
@@ -79,6 +91,21 @@ public class GameView extends SurfaceView implements Runnable {
             canvas.drawText("score: " + score, 10, 100, paint);
 
             ballManager.draw(canvas);
+
+
+            if(!ballManager.getPlayStatus() && !gameOver) {
+                Paint paint1 = new Paint();
+                paint1.setTextSize(100);
+                paint1.setColor(Color.WHITE);
+                drawCenter(canvas, paint1, "Touch to Start");
+            }
+
+            if(gameOver) {
+//                Paint flushScreen = new Paint();
+//                paint.setColor(Color.BLACK);
+//                canvas.drawRect(0,0,Constants.SCREEN_WIDTH,Constants.SCREEN_HEIGHT, flushScreen);
+                drawCenter(canvas, paint, "Game Over");
+            }
 
             ourHolder.unlockCanvasAndPost(canvas);
         }
@@ -104,40 +131,42 @@ public class GameView extends SurfaceView implements Runnable {
         if(!ballManager.getPlayStatus()) {
             ballManager.switchPlayStatus();
         }
-//        if(ballManager.getPlayStatus()) {
 
-            switch(motionEvent.getAction()) {
+        switch(motionEvent.getAction()) {
 
-                case(MotionEvent.ACTION_DOWN):
-                    Log.d("onTouch", "click");
-                    int x = (int)motionEvent.getX();
-                    int y = (int)motionEvent.getY();
+            case(MotionEvent.ACTION_DOWN):
+                Log.d("onTouch", "click");
+                int x = (int)motionEvent.getX();
+                int y = (int)motionEvent.getY();
 
-                    for(Iterator<Ball> ite = ballManager.balls.listIterator(); ite.hasNext();) {
-                        Ball ball = ite.next();
-                        if(ball.getRectangle().contains(x,y)){
-                            try {
-                                ite.remove();
-                                score++;
-                            } catch (Exception e) {
-                                Log.d("GameView", "Error in onTouch");
-                                e.printStackTrace();
-                            }
+                for(Iterator<Ball> ite = ballManager.balls.listIterator(); ite.hasNext();) {
+                    Ball ball = ite.next();
+                    if(ball.getRectangle().contains(x,y)){
+                        try {
+                            ite.remove();
+                            score++;
+                        } catch (Exception e) {
+                            Log.d("GameView", "Error in onTouch");
+                            e.printStackTrace();
+                            break;
                         }
                     }
 
-//                    for(Ball ball : ballManager.balls) {
-//
-//                        if(ball.getRectangle().contains(x,y)) {
-//                            try {
-//                                score++;
-//                            } catch (Exception e) {
-//                                Log.d("onTouchEvent", "ballClicked");
-//                            }
-//                        }
-//                    }
+
+                }
             }
-//        }
+
         return true;
+    }
+
+    private void drawCenter(Canvas canvas, Paint paint, String text) {
+        canvas.getClipBounds(r);
+        int cHeight = r.height();
+        int cWidth = r.width();
+        paint.setTextAlign(Paint.Align.LEFT);
+        paint.getTextBounds(text, 0, text.length(), r);
+        float x = cWidth / 2f - r.width() / 2f - r.left;
+        float y = cHeight / 2f + r.height() / 2f - r.bottom;
+        canvas.drawText(text, x, y, paint);
     }
 }

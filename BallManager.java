@@ -21,6 +21,7 @@ public class BallManager{
     public ListIterator<Ball> ite;
     private long startTime;
     private long initTime;
+    private int elapsedTime;
     int color;
     int ballHeight;
     int ballGap;
@@ -49,19 +50,20 @@ public class BallManager{
     }
 
     public void update() {
-        if(getPlayStatus()) {
-            int elapsedTime = (int) (System.currentTimeMillis() - startTime);
-            startTime = System.currentTimeMillis();
-            float speed = (float) (-0.5 + Math.sqrt((startTime - initTime) / 1500.0)) * Constants.SCREEN_HEIGHT / (10000.0f);
+//            elapsedTime = (int) (System.currentTimeMillis() - startTime);
+        startTime = System.currentTimeMillis();
+        float speed = (float) (-0.5 + Math.sqrt((startTime - initTime) / 1500.0)) * Constants.SCREEN_HEIGHT / (10000.0f);
+        try {
             for (Ball ball : balls) {
-                ball.incrementY(speed * elapsedTime);
+                ball.incrementY(speed * 10);
             }
-            if (balls.get(balls.size() - 1).getRectangle().top >= 0) {
-                int startX = (int) (Math.random() * (Constants.SCREEN_WIDTH - ballHeight));
-                balls.add(0, new Ball(startX, (int) (balls.get(0).getRectangle().top - ballHeight - ballGap), ballHeight, color));
-            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        Log.d("playStatus", "" +getPlayStatus());
+        if (balls.get(balls.size() - 1).getRectangle().top >= 0) {
+            int startX = (int) (Math.random() * (Constants.SCREEN_WIDTH - ballHeight));
+            balls.add(0, new Ball(startX, (int) (balls.get(0).getRectangle().top - ballHeight - ballGap), ballHeight, color));
+        }
     }
 
     public void draw(Canvas canvas) {
@@ -70,6 +72,7 @@ public class BallManager{
                 Ball ball = ite.next();
                 ball.draw(canvas);
             } catch (Exception e) {
+                //breaks out of for loop on error
                 Log.d("BallManager", "Error in draw");
                 break;
             }

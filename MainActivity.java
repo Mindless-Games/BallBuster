@@ -39,13 +39,13 @@ public class MainActivity extends Activity {
             }
         });
 
-        final ImageButton cusButton = findViewById(R.id.cusScreenButton);
-        cusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                setContentView(R.layout.customize_screen);
-            }
-        });
+//        final ImageButton cusButton = findViewById(R.id.cusScreenButton);
+//        cusButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                setContentView(R.layout.customize_screen);
+//            }
+//        });
     }
 
     @Override
